@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Static</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="datatables/css/jquery.dataTables.css">
+    <script type="text/javascript" src="datatables/js/jquery.js"></script>
+    <script type="text/javascript" charset="utf8" src="datatables/js/jquery.dataTables.js"></script>
+</head>
+<body>
+<table id="example" class="display" cellspacing="0" width="100%">
+    <thead>
+    <tr>
+        <th>Name</th>
+        <th>Position</th>
+        <th>Office</th>
+        <th>Extn.</th>
+        <th>Start date</th>
+        <th>Salary</th>
+    </tr>
+    </thead>
+    <tfoot>
+    <tr>
+        <th>Name</th>
+        <th>Position</th>
+        <th>Office</th>
+        <th>Extn.</th>
+        <th>Start date</th>
+        <th>Salary</th>
+    </tr>
+    </tfoot>
+</table>
+
+<script type="text/javascript">
+    $(document).ready(function() {
+        $('#example').DataTable( {
+            "serverSide": true,
+            "processing": true,
+            "ajax": {
+                "traditional": true,
+                "url": "api/members",
+                "data": function(data) {
+                    return {
+                        page: Math.floor(data.start/data.length),
+                        size: data.length,
+                        sort: data.order.map(function(order) {
+                            var column = data.columns[order.column];
+                            return (column.name || column.data) + "," + order.dir;
+                        })
+                    }
+                },
+                "dataSrc": function(json) {
+                    json.recordsTotal = json.total;
+                    json.recordsFiltered = json.total;
+                    return json.content;
+                }
+            },
+            "columns": [
+                { "data": "name" },
+                { "data": "position" },
+                { "data": "office" },
+                { "data": "number" },
+                { "data": "startDate" },
+                { "data": "salary" }
+            ]
+        } );
+    } );
+</script>
+</body>
+</html>
